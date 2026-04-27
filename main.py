@@ -13,6 +13,7 @@ import menus
 import wxlib
 
 import ctypes
+from i18n import _
 
 
 class DropTarget(wx.FileDropTarget):
@@ -31,8 +32,8 @@ class DropTarget(wx.FileDropTarget):
 
         count_files = len(filenames)
         if count_files > self.LIMIT_DROP:
-            message = "一度にドロップできるファイル数は10件までです！"
-            caption = "ファイルドロップ数オーバー"
+            message = _("一度にドロップできるファイル数は10件までです！")
+            caption = _("ファイルドロップ数オーバー")
             wxlib.post_info(self.parent, message, caption, style=wx.ICON_EXCLAMATION)
             return True
 
@@ -42,8 +43,8 @@ class DropTarget(wx.FileDropTarget):
                 wxlib.post_append(self.parent, path_drop)
 
             else:
-                message = f"{path_drop.name}は画像追加の対象外です!\n追加できる画像の拡張子はjpg,png,gifのみです！"
-                caption = "対象外ファイル"
+                message = _("{name}は画像追加の対象外です!\n追加できる画像の拡張子はjpg,png,gifのみです！").format(name=path_drop.name)
+                caption = _("対象外ファイル")
                 wxlib.post_info(self.parent, message, caption, style=wx.ICON_EXCLAMATION)
 
         return True
@@ -51,7 +52,7 @@ class DropTarget(wx.FileDropTarget):
 
 class MainFrame(wx.Frame):
     def __init__(self):
-        super().__init__(None, -1, "たぬこら")
+        super().__init__(None, -1, _("たぬこら"))
         # progress
         self.dial_progress = None
         self.is_progress = False
@@ -72,7 +73,7 @@ class MainFrame(wx.Frame):
         self.panel_preview = widgets.PreviewPanel(self.panel)
         self.panel_property = widgets.PropertyPanel(self.panel)
         # right
-        self.panel_append = widgets.ImageAppendPanel(self.panel, "画像追加")
+        self.panel_append = widgets.ImageAppendPanel(self.panel, _("画像追加"))
         self.panel_composite = widgets.CompositePanel(self.panel)
         self.sizer = wx.BoxSizer()
         self.setting_widgets()
@@ -133,8 +134,8 @@ class MainFrame(wx.Frame):
             is_completed = CONFIG.manager.append(event.path_image, event.frames)
 
         if not is_completed:
-            message = f"{event.path_image.stem}が開けません！"
-            caption = "ファイルアクセスエラー"
+            message = _("{name}が開けません！").format(name=event.path_image.stem)
+            caption = _("ファイルアクセスエラー")
             wxlib.show_message(None, message, caption, wx.ICON_ERROR)
             return
 
@@ -200,13 +201,13 @@ class MainFrame(wx.Frame):
             self.panel_preview.show_animation()
 
     def on_play(self, event):
-        wxlib.post_start_progress(self, "少しお待ちください…", "プレビュー作成中")
+        wxlib.post_start_progress(self, _("少しお待ちください…"), _("プレビュー作成中"))
         is_single = self.panel_composite.radio_single.GetValue()
         thread_preview = threading.Thread(target=self.save_preview, args=(is_single,), daemon=True)
         thread_preview.start()
 
     def save_preview(self, is_single):
-        with wxlib.progress_context(self, "プレビューの作成に失敗しました…", "プレビュー作成失敗"):
+        with wxlib.progress_context(self, _("プレビューの作成に失敗しました…"), _("プレビュー作成失敗")):
             CONFIG.manager.save_preview(is_single)
             wxlib.post_end_progress(self, need_play=True)
 
@@ -234,8 +235,8 @@ class MainFrame(wx.Frame):
             pass
 
     def on_close(self, event):
-        message = "終了してよろしいですか？"
-        caption = "終了確認"
+        message = _("終了してよろしいですか？")
+        caption = _("終了確認")
         style = wx.ICON_EXCLAMATION | wx.OK | wx.CANCEL
         result = wxlib.show_message(self, message, caption, style)
         if result != wx.ID_OK:

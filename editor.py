@@ -9,6 +9,7 @@ import base64
 
 from itertools import cycle
 import const
+from i18n import _
 
 from PIL import ImageFile
 
@@ -193,7 +194,8 @@ def draw_text(im, text, size, path_font, color, bbox):
     center_x, center_y = left + (right - left) // 2, top + (bottom - top) // 2
     draw = ImageDraw.Draw(im_draw)
     font = ImageFont.truetype(str(path_font), size)
-    w, h = draw.textsize(text, font=font)
+    bbox_text = font.getbbox(text)
+    w, h = bbox_text[2] - bbox_text[0], bbox_text[3] - bbox_text[1]
     pos_draw = center_x - w // 2, center_y - h // 2
     draw.text(pos_draw, text, font=font, fill=color)
     return im_draw
@@ -739,7 +741,7 @@ def create_bitmap_icon():
     size_icon = (100,100)
     width, height = size_icon
     app = wx.App()
-    with wx.DirDialog(None, "アイコンフォルダを選択") as dial:
+    with wx.DirDialog(None, _("アイコンフォルダを選択")) as dial:
         result = dial.ShowModal()
         if result != wx.ID_OK:
             return

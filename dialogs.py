@@ -12,6 +12,7 @@ from config import CONFIG
 import wxlib
 import widgets
 import editor
+from i18n import _
 
 
 class ImageSelectDialog(wx.Dialog):
@@ -23,7 +24,7 @@ class ImageSelectDialog(wx.Dialog):
 
         self.panel = wx.Panel(self)
         self.panel_target = wx.Panel(self.panel)
-        self.panel_append = widgets.ImageAppendPanel(self.panel, "画像選択", CONFIG.dir_dialog, True)
+        self.panel_append = widgets.ImageAppendPanel(self.panel, _("画像選択"), CONFIG.dir_dialog, True)
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.setting_widgets()
         self.set_position()
@@ -42,7 +43,7 @@ class ImageSelectDialog(wx.Dialog):
             st_label = wx.StaticText(self.panel_target, -1, image.label)
 
             sizer_target = wx.BoxSizer()
-            sizer_target.Add(wx.StaticText(self.panel_target, -1, "交換対象:"), 0, wx.ALIGN_CENTER)
+            sizer_target.Add(wx.StaticText(self.panel_target, -1, _("交換対象:")), 0, wx.ALIGN_CENTER)
             sizer_target.Add(panel_bmp)
             sizer_target.Add(st_label, 0, wx.ALIGN_CENTER)
             self.panel_target.SetSizer(sizer_target)
@@ -114,7 +115,7 @@ class SelectionColorPanel(ScrolledPanel):
 class SelectColorDialog(wx.Dialog):
     def __init__(self, parent, path_image, frames):
         style = wx.DEFAULT_DIALOG_STYLE | wx.OK | wx.CANCEL
-        super().__init__(parent, -1, "透過色指定ダイアログ", style=style)
+        super().__init__(parent, -1, _("透過色指定ダイアログ"), style=style)
         self.parent = parent
 
         self.im_target = (editor.open_image(path_image).convert("RGBA") if not frames else
@@ -141,7 +142,7 @@ class SelectColorDialog(wx.Dialog):
         self.panel_digital = widgets.BitmapPanel(self.panel)
         self.panel_viewer = widgets.BitmapPanel(self.panel, bmp=self.bmp_edit)
         self.panel_selection = SelectionColorPanel(self.panel)
-        self.check_face = wx.CheckBox(self.panel, -1, "顔だけ透過")
+        self.check_face = wx.CheckBox(self.panel, -1, _("顔だけ透過"))
         self.btn_ok = wx.Button(self.panel, wx.ID_OK, "OK")
         self.btn_cancel = wx.Button(self.panel, wx.ID_CANCEL, "Cancel")
         self.sizer = wx.BoxSizer(wx.VERTICAL)
@@ -164,7 +165,7 @@ class SelectColorDialog(wx.Dialog):
         sizer_btn.Add(self.btn_ok, 1, wx.GROW | wx.ALL, 5)
         sizer_btn.Add(self.btn_cancel, 1, wx.GROW | wx.ALL, 5)
 
-        sizer_bottom.Add(wx.StaticText(self.panel, -1, "選択色一覧"), 0, wx.ALIGN_CENTER_VERTICAL)
+        sizer_bottom.Add(wx.StaticText(self.panel, -1, _("選択色一覧")), 0, wx.ALIGN_CENTER_VERTICAL)
         sizer_bottom.Add(self.panel_selection, 1, wx.GROW)
         sizer_bottom.Add(sizer_btn, 0, wx.GROW)
 
@@ -210,7 +211,7 @@ class SelectColorDialog(wx.Dialog):
 
 class ClipperSelectDialog(wx.Dialog):
     def __init__(self, parent, id_image):
-        super().__init__(parent, -1, "クリッパー設定ダイアログ")
+        super().__init__(parent, -1, _("クリッパー設定ダイアログ"))
         self.panel = wx.Panel(self)
         self.id_image = id_image
         image_target = CONFIG.manager.get_image(id_image)
@@ -257,11 +258,11 @@ class ClipperSelectDialog(wx.Dialog):
         sizer_unclipper = wx.BoxSizer(wx.VERTICAL)
         sizer_clipper = wx.BoxSizer(wx.VERTICAL)
 
-        sizer_unclipper.Add(wx.StaticText(self.panel, -1, "画像一覧", style=wx.ALIGN_CENTER), 0,
+        sizer_unclipper.Add(wx.StaticText(self.panel, -1, _("画像一覧"), style=wx.ALIGN_CENTER), 0,
                             wx.GROW)
         sizer_unclipper.Add(self.lc_unclipper, 1, wx.GROW)
 
-        sizer_clipper.Add(wx.StaticText(self.panel, -1, "クリッパー", style=wx.ALIGN_CENTER), 0, wx.GROW)
+        sizer_clipper.Add(wx.StaticText(self.panel, -1, _("クリッパー"), style=wx.ALIGN_CENTER), 0, wx.GROW)
         sizer_clipper.Add(self.lc_clipper, 1, wx.GROW)
 
         sizer_mid.Add(sizer_unclipper, 1, wx.GROW)
@@ -337,30 +338,30 @@ class ClipperSelectDialog(wx.Dialog):
 
 class AnimationConverterDialog(wx.Dialog):
     def __init__(self, parent):
-        super().__init__(parent, -1, "アニメーションコンバータ")
+        super().__init__(parent, -1, _("アニメーションコンバータ"))
         self.parent = parent
         self.panel = wx.Panel(self)
         self.note = wx.Notebook(self.panel)
         self.panel_connect = wx.Panel(self.note)
         self.panel_separate = wx.Panel(self.note)
 
-        self.note.InsertPage(0, self.panel_connect, "結合")
-        self.note.InsertPage(1, self.panel_separate, "分解")
+        self.note.InsertPage(0, self.panel_connect, _("結合"))
+        self.note.InsertPage(1, self.panel_separate, _("分解"))
 
-        cap_connect = "選択したフォルダ内のPNGを名前順に結合してアニメーション画像を作成します。"
+        cap_connect = _("選択したフォルダ内のPNGを名前順に結合してアニメーション画像を作成します。")
         self.st_connect = wx.StaticText(self.panel_connect, -1, cap_connect)
         self.spin_duration = wx.SpinCtrl(self.panel_connect, -1, min=20, max=1000)
         self.combo_connect = wx.ComboBox(self.panel_connect, -1,
                                          style=wx.CB_DROPDOWN | wx.CB_READONLY)
-        self.btn_connect = wx.Button(self.panel_connect, -1, "フォルダ選択")
+        self.btn_connect = wx.Button(self.panel_connect, -1, _("フォルダ選択"))
 
-        cap_separate = "選択したアニメーション画像をフレーム毎に分解します。\n加えて画像の輪郭毎に分割することもできます。"
+        cap_separate = _("選択したアニメーション画像をフレーム毎に分解します。\n加えて画像の輪郭毎に分割することもできます。")
         self.st_separate = wx.StaticText(self.panel_separate, -1, cap_separate)
-        self.check_parts = wx.CheckBox(self.panel_separate, -1, "輪郭毎に分割")
-        self.check_trim = wx.CheckBox(self.panel_separate, -1, "余白をトリミング")
-        self.text_omit = wx.StaticText(self.panel_separate, -1, "最低検出サイズ")
+        self.check_parts = wx.CheckBox(self.panel_separate, -1, _("輪郭毎に分割"))
+        self.check_trim = wx.CheckBox(self.panel_separate, -1, _("余白をトリミング"))
+        self.text_omit = wx.StaticText(self.panel_separate, -1, _("最低検出サイズ"))
         self.spin_omit = wx.SpinCtrl(self.panel_separate, -1, min=0, max=1000)
-        self.btn_separate = wx.Button(self.panel_separate, -1, "画像選択")
+        self.btn_separate = wx.Button(self.panel_separate, -1, _("画像選択"))
 
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.setting_widgets()
@@ -381,7 +382,7 @@ class AnimationConverterDialog(wx.Dialog):
 
         sizer_connect = wx.BoxSizer(wx.VERTICAL)
         sizer_duration = wx.BoxSizer()
-        sizer_duration.Add(wx.StaticText(self.panel_connect, -1, "表示間隔(ms)"), 0,
+        sizer_duration.Add(wx.StaticText(self.panel_connect, -1, _("表示間隔(ms)")), 0,
                            wx.ALIGN_CENTER_VERTICAL)
         sizer_duration.Add(self.spin_duration)
 
@@ -414,14 +415,14 @@ class AnimationConverterDialog(wx.Dialog):
         self.Centre()
 
     def on_connect(self, event):
-        message = "結合したい画像が入ったフォルダを選択"
+        message = _("結合したい画像が入ったフォルダを選択")
         folder_target = wxlib.select_folder(self, message)
         if not folder_target:
             return
 
         lst_path = [path_png for path_png in folder_target.glob("*.png")]
         if not lst_path:
-            wxlib.show_message(self, "フォルダ内に画像が見つかりません！", "画像未発見エラー", wx.ICON_EXCLAMATION)
+            wxlib.show_message(self, _("フォルダ内に画像が見つかりません！"), _("画像未発見エラー"), wx.ICON_EXCLAMATION)
             return
 
         lst_path = os_sorted(lst_path)
@@ -429,8 +430,8 @@ class AnimationConverterDialog(wx.Dialog):
         for path_png in lst_path:
             frame = editor.open_image(path_png)
             if not frame:
-                message = f"{path_png.name}が開けません！"
-                caption = "ファイルアクセスエラー"
+                message = _("{name}が開けません！").format(name=path_png.name)
+                caption = _("ファイルアクセスエラー")
                 wxlib.show_message(self, message, caption, wx.ICON_ERROR)
                 return
 
@@ -440,26 +441,26 @@ class AnimationConverterDialog(wx.Dialog):
         suffix = ".gif" if mode_save == const.SaveMode.GIF else ".png"
         name_file = f"{folder_target.stem}{suffix}"
         wildcard = f"*{suffix}"
-        message = "画像の保存先"
+        message = _("画像の保存先")
         path_save = wxlib.save_file(self, message, wildcard, name_file)
         if not path_save:
             return
 
         duration = self.spin_duration.GetValue()
-        wxlib.post_start_progress(self.parent, "しばらくお待ちください…", "アニメーション画像作成中")
+        wxlib.post_start_progress(self.parent, "しばらくお待ちください…", _("アニメーション画像作成中"))
         thread_connect = threading.Thread(target=self.connect_animation,
                                           args=(frames, path_save, duration))
         thread_connect.start()
 
     def connect_animation(self, frames, path_save, duration):
-        with wxlib.progress_context(self.parent, "アニメーション画像の作成に失敗しました…", "作成失敗"):
+        with wxlib.progress_context(self.parent, _("アニメーション画像の作成に失敗しました…"), _("作成失敗")):
             if path_save.suffix == ".gif":
                 editor.save_gif(path_save, frames, duration)
             else:
                 editor.save_apng(path_save, frames, duration)
 
-            caption = "作成完了" if frames else "フォルダ内画像なし"
-            message = "アニメーション画像の作成が完了しました！" if frames else "フォルダ内に画像がありません！"
+            caption = _("作成完了") if frames else _("フォルダ内画像なし")
+            message = _("アニメーション画像の作成が完了しました！") if frames else _("フォルダ内に画像がありません！")
             style = wx.ICON_INFORMATION if frames else wx.ICON_EXCLAMATION
             wxlib.post_end_progress(self.parent, message, caption, style,
                                     path_open=path_save.parent)
@@ -471,7 +472,7 @@ class AnimationConverterDialog(wx.Dialog):
         self.spin_omit.Enable(enable)
 
     def on_separate(self, event):
-        message = "分解したい画像を選択"
+        message = _("分解したい画像を選択")
         wildcard = ";".join([f"*{suffix}" for suffix in [".gif", ".png"]])
         path_image = wxlib.select_file(self, message, wildcard)
         if not path_image:
@@ -479,8 +480,8 @@ class AnimationConverterDialog(wx.Dialog):
 
         frames = editor.get_frames(path_image)
         if not frames:
-            message = f"{path_image.name}が開けません！"
-            caption = "ファイルアクセスエラー"
+            message = _("{name}が開けません！").format(name=path_image.name)
+            caption = _("ファイルアクセスエラー")
             wxlib.show_message(self, message, caption, wx.ICON_ERROR)
             return
 
@@ -489,18 +490,18 @@ class AnimationConverterDialog(wx.Dialog):
         sep_parts = self.check_parts.GetValue()
         trim = self.check_trim.GetValue()
         area_omit = self.spin_omit.GetValue()
-        wxlib.post_start_progress(self.parent, "しばらくお待ちください…", "画像分割中")
+        wxlib.post_start_progress(self.parent, "しばらくお待ちください…", _("画像分割中"))
         thread_separate = threading.Thread(target=self.separate_animation,
                                            args=(folder_save, frames, sep_parts, trim, area_omit))
         thread_separate.start()
 
     def separate_animation(self, folder_save, frames, sep_parts, trim, are_omit):
-        with wxlib.progress_context(self.parent, "画像の分割に失敗しました…", "分割失敗"):
+        with wxlib.progress_context(self.parent, _("画像の分割に失敗しました…"), _("分割失敗")):
             if sep_parts:
                 editor.save_png_sequence_contour(folder_save, frames, trim, are_omit)
             else:
                 editor.save_png_sequence(folder_save, frames)
 
-            message = "画像の分割が完了しました！"
-            caption = "分割完了"
+            message = _("画像の分割が完了しました！")
+            caption = _("分割完了")
             wxlib.post_end_progress(self.parent, message, caption, path_open=folder_save)

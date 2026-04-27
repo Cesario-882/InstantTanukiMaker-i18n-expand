@@ -20,7 +20,7 @@ class PartsImage:
     image: Image.Image
 
     icon: Image.Image = None
-    offset: np.ndarray = np.array([0, 0])
+    offset: np.ndarray = field(default_factory=lambda: np.array([0, 0]))
     offset_center: np.ndarray = None
     angle: int = 0
     zoom_x: float = 1.0
@@ -183,7 +183,7 @@ class FileImage:
     size: np.ndarray = None
     number_frames: int = None
 
-    offset: np.ndarray = np.array([0, 0])
+    offset: np.ndarray = field(default_factory=lambda: np.array([0, 0]))
     angle: int = 0
     zoom_x: float = 1.0
     zoom_y: float = 1.0
@@ -472,7 +472,7 @@ class ImageManager:
     fixed_size: bool = False
     fixed_number_frames: bool = False
     # system
-    offset_base: np.ndarray = const.OFFSET_FLAT
+    offset_base: np.ndarray = field(default_factory=lambda: const.OFFSET_FLAT.copy())
     id_file: int = 0
     id_parts: int = 0
 

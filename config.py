@@ -3,7 +3,7 @@ from PIL import Image
 import numpy as np
 import pathlib
 from itertools import cycle
-from collections import Iterator
+from collections.abc import Iterator
 
 import const
 from image_manager import ImageManager, FrameImage, FileImage, PartsImage

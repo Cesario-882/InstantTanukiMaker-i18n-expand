@@ -129,7 +129,10 @@ MODES_SAVE = [field.default for field in fields(SaveMode)]
 THRESHOLD_CONVERT_SINGLE = 0.25
 
 # フォルダパス
-FOLDER_DATA = pathlib.Path(sys.prefix + "/Data")
+_base_dir = pathlib.Path(__file__).resolve().parent
+FOLDER_DATA = _base_dir / "Data"
+if not FOLDER_DATA.exists():
+    FOLDER_DATA = pathlib.Path(sys.prefix) / "Data"
 FOLDER_IMAGE = FOLDER_DATA / "Image"
 FOLDER_ICON = FOLDER_IMAGE / "Icon"
 FOLDER_WIDGET = FOLDER_ICON / "Widget"

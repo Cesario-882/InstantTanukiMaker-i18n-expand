@@ -18,6 +18,7 @@ from config import CONFIG
 import editor
 import menus
 import wxlib
+from i18n import _
 
 
 # アイコン表示
@@ -65,7 +66,7 @@ class FocusDisplayPanel(BitmapPanel):
         im_focus_off = editor.open_image(const.PATH_FOCUS_OFF).convert("RGBA")
         self.bmp_focus_on = wx.Bitmap.FromBufferRGBA(*im_focus_on.size, im_focus_on.tobytes())
         self.bmp_focus_off = wx.Bitmap.FromBufferRGBA(*im_focus_off.size, im_focus_off.tobytes())
-        self.sbmp.SetToolTip("キー受付")
+        self.sbmp.SetToolTip(_("キー受付"))
         self.set_bmp(self.bmp_focus_off)
         self.sbmp.Bind(wx.EVT_LEFT_DOWN, self.on_click)
 
@@ -82,7 +83,7 @@ class FrameNumberDisplayPanel(BitmapPanel):
     def __init__(self, parent):
         super().__init__(parent)
         self.im_display = editor.open_image(const.PATH_DISPLAY_NUM).convert("RGBA")
-        self.sbmp.SetToolTip("現在フレーム")
+        self.sbmp.SetToolTip(_("現在フレーム"))
         self.sbmp.Bind(wx.EVT_LEFT_DOWN, self.on_click)
         self.sbmp.Bind(wx.EVT_LEFT_DCLICK, self.on_click)
         self.sbmp.Bind(wx.EVT_RIGHT_DOWN, self.on_click)
@@ -122,13 +123,13 @@ class SelectionMarkerStatusPanel(BitmapPanel):
         self.bmp_mark_off = wx.Bitmap.FromBufferRGBA(*im_mark_off.size, im_mark_off.tobytes())
         self.sbmp.Bind(wx.EVT_LEFT_DOWN, self.on_left)
         self.sbmp.Bind(wx.EVT_LEFT_DCLICK, self.on_left)
-        self.sbmp.SetToolTip("マーカー表示")
+        self.sbmp.SetToolTip(_("マーカー表示"))
         self.set_bmp(self.bmp_mark_off)
 
     def update_display(self):
         marked = CONFIG.manager.marked_selection
         bmp = self.bmp_mark_on if marked else self.bmp_mark_off
-        tooltip = "マーカー非表示" if marked else "マーカー表示"
+        tooltip = _("マーカー非表示") if marked else _("マーカー表示")
         self.sbmp.SetToolTip(tooltip)
         self.set_bmp(bmp)
 
@@ -150,8 +151,8 @@ class PlayingStatusPanel(wx.Panel):
         self.setting_widgets()
 
     def setting_widgets(self):
-        self.panel_pause.sbmp.SetToolTip("再生")
-        self.ctrl_playing.SetToolTip("停止")
+        self.panel_pause.sbmp.SetToolTip(_("再生"))
+        self.ctrl_playing.SetToolTip(_("停止"))
         self.ctrl_playing.LoadFile(str(const.PATH_PLAYING))
         self.ctrl_playing.Hide()
 
@@ -164,8 +165,8 @@ class PlayingStatusPanel(wx.Panel):
 
     def on_play(self, event):
         if not CONFIG.manager.can_save():
-            message = "画像が表示されていません！"
-            caption = "画像未表示"
+            message = _("画像が表示されていません！")
+            caption = _("画像未表示")
             style = wx.ICON_EXCLAMATION
             wxlib.post_info(self.GetTopLevelParent(), message=message, caption=caption, style=style)
             return
@@ -394,7 +395,7 @@ class SelectionViewerPanel(ScrolledPanel):
         super().__init__(parent)
         self.lst_icon = []
         self.lst_id = [None]
-        self.text_selected = wx.StaticText(self, -1, "未選択")
+        self.text_selected = wx.StaticText(self, -1, _("未選択"))
         self.sizer = wx.BoxSizer()
         self.sizer_icon = wx.BoxSizer()
         self.create_icon(const.BMP_UNSELECTED)
@@ -409,7 +410,7 @@ class SelectionViewerPanel(ScrolledPanel):
         count_selection = len(lst_id_selection)
         if count_selection == 0:
             self.text_selected.Show()
-            self.text_selected.SetLabelText("未選択")
+            self.text_selected.SetLabelText(_("未選択"))
             lst_id_selection.append(None)
 
         elif count_selection == 1:
@@ -504,10 +505,10 @@ class PropertyPanel(wx.Panel):
             if type(child) is wx.TextCtrl:
                 self.tc_alpha = child
 
-        self.check_alias = wx.CheckBox(self, -1, "アンチエイリアス", style=wx.CHK_3STATE)
-        self.check_flip = wx.CheckBox(self, -1, "左右反転", style=wx.CHK_3STATE)
+        self.check_alias = wx.CheckBox(self, -1, _("アンチエイリアス"), style=wx.CHK_3STATE)
+        self.check_flip = wx.CheckBox(self, -1, _("左右反転"), style=wx.CHK_3STATE)
 
-        sbox = wx.StaticBox(self, -1, "パーツプロパティ")
+        sbox = wx.StaticBox(self, -1, _("パーツプロパティ"))
         self.sbsizer = wx.StaticBoxSizer(sbox, wx.VERTICAL)
         self.setting_widgets()
         self.Disable()
@@ -545,7 +546,7 @@ class PropertyPanel(wx.Panel):
         sizer_property = wx.FlexGridSizer(rows=5, cols=4, gap=(0, 10))
 
         sizer_selected = wx.BoxSizer()
-        sizer_selected.Add(wx.StaticText(self, -1, "選択中画像:"), 0,
+        sizer_selected.Add(wx.StaticText(self, -1, _("選択中画像:")), 0,
                            wx.RIGHT | wx.ALIGN_CENTER_VERTICAL, 10)
         sizer_selected.Add(self.panel_selection, 1, wx.GROW)
 
@@ -563,23 +564,23 @@ class PropertyPanel(wx.Panel):
         sizer_zoom_y.Add(wx.StaticText(self, -1, "Y:"), 0, wx.ALIGN_CENTER_VERTICAL)
         sizer_zoom_y.Add(self.spin_zoom_y, 1)
 
-        sizer_property.Add(wx.StaticText(self, -1, "オフセット"), 0, wx.ALIGN_CENTER_VERTICAL)
+        sizer_property.Add(wx.StaticText(self, -1, _("オフセット")), 0, wx.ALIGN_CENTER_VERTICAL)
         sizer_property.Add(sizer_offset_x, 0, wx.GROW)
         sizer_property.Add(sizer_offset_y, 0, wx.GROW | wx.LEFT, 10)
         sizer_property.Add(self.check_alias, 0, wx.LEFT, 15)
-        sizer_property.Add(wx.StaticText(self, -1, "角度"), 0, wx.ALIGN_CENTER_VERTICAL)
+        sizer_property.Add(wx.StaticText(self, -1, _("角度")), 0, wx.ALIGN_CENTER_VERTICAL)
         sizer_property.Add(self.spin_angle, 0, wx.GROW)
         sizer_property.Add(wx.StaticText(self, -1, ""), 0)
         sizer_property.Add(self.check_flip, 0, wx.LEFT, 15)
-        sizer_property.Add(wx.StaticText(self, -1, "拡大率"), 0, wx.ALIGN_CENTER_VERTICAL)
+        sizer_property.Add(wx.StaticText(self, -1, _("拡大率")), 0, wx.ALIGN_CENTER_VERTICAL)
         sizer_property.Add(sizer_zoom_x, 0, wx.GROW)
         sizer_property.Add(sizer_zoom_y, 0, wx.GROW | wx.LEFT, 10)
         sizer_property.Add(wx.StaticText(self, -1, ""))
-        sizer_property.Add(wx.StaticText(self, -1, "透過率"), 0, wx.ALIGN_CENTER_VERTICAL)
+        sizer_property.Add(wx.StaticText(self, -1, _("透過率")), 0, wx.ALIGN_CENTER_VERTICAL)
         sizer_property.Add(self.spin_trans, 0, wx.GROW)
         sizer_property.Add(wx.StaticText(self, -1, ""))
         sizer_property.Add(wx.StaticText(self, -1, ""))
-        sizer_property.Add(wx.StaticText(self, -1, "カラーブレンド"),
+        sizer_property.Add(wx.StaticText(self, -1, _("カラーブレンド")),
                            0, wx.ALIGN_CENTER_VERTICAL | wx.RIGHT, 10)
         sizer_property.Add(self.combo_blend, 0)
         sizer_property.Add(self.ctrl_color, 0)
@@ -796,8 +797,8 @@ class ThumbnailPanel(ScrolledPanel):
     def get_nd_frames(self, path_image):
         frames = editor.get_frames(path_image)
         if not frames:
-            message = f"{path_image.name}が開けません！"
-            caption = "ファイルアクセスエラー"
+            message = _("{name}が開けません！").format(name=path_image.name)
+            caption = _("ファイルアクセスエラー")
             wxlib.post_info(self.GetTopLevelParent(), message, caption, wx.ICON_ERROR)
             return []
 
@@ -943,7 +944,7 @@ class ImageAppendPanel(wx.Panel):
 
         bmp_import = wx.Bitmap(str(const.PATH_BTN_IMPORT))
         btn_import = wx.BitmapButton(self, -1, bmp_import)
-        btn_import.SetToolTip("画像取込")
+        btn_import.SetToolTip(_("画像取込"))
         btn_import.Bind(wx.EVT_BUTTON, self.on_import)
         sizer_import.Add(btn_import, 0, wx.ALIGN_RIGHT)
         sizer_btn.Add(sizer_import, 1, wx.GROW | wx.ALL, 5)
@@ -965,8 +966,8 @@ class ImageAppendPanel(wx.Panel):
     def on_select_thumb(self, event):
         path = event.path
         if path.is_dir() and self.exceeded_display_limit(path):
-            message = "選択したフォルダ直下の画像が多すぎます!\n500件以下になるよう減らしてください!"
-            caption = "読込件数オーバー"
+            message = _("選択したフォルダ直下の画像が多すぎます!\n500件以下になるよう減らしてください!")
+            caption = _("読込件数オーバー")
             wxlib.post_info(self.GetTopLevelParent(), message, caption, wx.ICON_EXCLAMATION)
             return
 
@@ -986,7 +987,7 @@ class ImageAppendPanel(wx.Panel):
 
     def on_import(self, event):
         wildcard = ";".join([f"*{suffix}" for suffix in const.SUFFIXES_IMAGE])
-        path_image = wxlib.select_file(None, "取り込みたい画像を選択してください。", wildcard)
+        path_image = wxlib.select_file(None, _("取り込みたい画像を選択してください。"), wildcard)
         if not path_image:
             return
 
@@ -1007,7 +1008,7 @@ class PartsTreeCtrl(CustomTreeCtrl):
         self.order_il = []
         self.SetImageList(self.imagelist)
 
-        self.item_root = self.AddRoot("詳細構成")
+        self.item_root = self.AddRoot(_("詳細構成"))
         self.item_from = None
         self.accept_label = False
         self.label_prev = ""
@@ -1036,7 +1037,7 @@ class PartsTreeCtrl(CustomTreeCtrl):
         self.update_imagelist(order_frame)
         ix_selection = CONFIG.manager.ix_frame
         for ix, frame in enumerate(order_frame):
-            item_frame = self.AppendItem(self.item_root, f"フレーム【{ix + 1}】", data=ix)
+            item_frame = self.AppendItem(self.item_root, _("フレーム【{num}】").format(num=ix + 1), data=ix)
             for parts in frame.get_order_parts_display():
                 label = parts.label + "　" * (15 - len(parts.label))
                 item_parts = self.AppendItem(item_frame, label, data=parts.id_parts,
@@ -1411,8 +1412,8 @@ class ComponentPanel(wx.Panel):
         self.page_file = 0
         self.page_parts = 1
 
-        self.note.InsertPage(self.page_file, self.panel_file, "画像一覧")
-        self.note.InsertPage(self.page_parts, self.panel_parts, "詳細構成")
+        self.note.InsertPage(self.page_file, self.panel_file, _("画像一覧"))
+        self.note.InsertPage(self.page_parts, self.panel_parts, _("詳細構成"))
 
         self.flc = FileListCtrl(self.panel_file)
         self.tree = PartsTreeCtrl(self.panel_parts)
@@ -1464,21 +1465,21 @@ class CompositePanel(wx.Panel):
         super().__init__(parent)
         self.target_post = self.GetTopLevelParent()
 
-        self.sbox = wx.StaticBox(self, -1, "全体プロパティ")
+        self.sbox = wx.StaticBox(self, -1, _("全体プロパティ"))
         self.sbsizer = wx.StaticBoxSizer(self.sbox, wx.VERTICAL)
 
-        self.check_fixed_frames = wx.CheckBox(self, -1, "フレーム数")
+        self.check_fixed_frames = wx.CheckBox(self, -1, _("フレーム数"))
         self.spin_num_frames = wx.SpinCtrl(self, -1, min=1, max=99, style=wx.TE_PROCESS_ENTER)
 
-        self.check_fixed_size = wx.CheckBox(self, -1, "画像サイズ")
+        self.check_fixed_size = wx.CheckBox(self, -1, _("画像サイズ"))
         self.spin_width = FloatSpin(self, -1, min_val=const.MIN_WIDTH, max_val=const.MAX_WIDTH,
                                     increment=50, digits=0,
                                     style=wx.TE_PROCESS_ENTER | wx.SP_HORIZONTAL)
         self.spin_height = FloatSpin(self, -1, min_val=const.MIN_HEIGHT, max_val=const.MAX_HEIGHT,
                                      increment=50, digits=0, style=wx.TE_PROCESS_ENTER)
 
-        self.radio_single = wx.RadioButton(self, -1, "シングル", style=wx.RB_GROUP)
-        self.radio_multi = wx.RadioButton(self, -1, "マルチ")
+        self.radio_single = wx.RadioButton(self, -1, _("シングル"), style=wx.RB_GROUP)
+        self.radio_multi = wx.RadioButton(self, -1, _("マルチ"))
         self.spin_duration = wx.SpinCtrl(self, -1, min=20, max=1000,
                                          style=wx.TE_PROCESS_ENTER)
 
@@ -1487,9 +1488,9 @@ class CompositePanel(wx.Panel):
         self.combo_filter_color = wx.ComboBox(self, -1, style=wx.CB_DROPDOWN | wx.CB_READONLY)
         self.combo_filter_image = wx.ComboBox(self, -1, style=wx.CB_DROPDOWN | wx.CB_READONLY)
 
-        self.btn_clear = wx.Button(self, -1, "ALLクリア")
+        self.btn_clear = wx.Button(self, -1, _("ALLクリア"))
         self.combo_save = wx.ComboBox(self, -1, style=wx.CB_DROPDOWN | wx.CB_READONLY)
-        self.btn_save = wx.Button(self, -1, "保存")
+        self.btn_save = wx.Button(self, -1, _("保存"))
 
         self.setting_widgets()
         self.update_display()
@@ -1584,9 +1585,9 @@ class CompositePanel(wx.Panel):
         sizer_duration.Add(self.panel_grid, 0, wx.GROW | wx.ALL, 5)
 
         sizer_filter = wx.BoxSizer()
-        sizer_filter.Add(wx.StaticText(self, -1, "色フィルタ:"), 0, wx.ALIGN_CENTER)
+        sizer_filter.Add(wx.StaticText(self, -1, _("色フィルタ:")), 0, wx.ALIGN_CENTER)
         sizer_filter.Add(self.combo_filter_color, 0, wx.ALL, 5)
-        sizer_filter.Add(wx.StaticText(self, -1, "画像フィルタ:"), 0, wx.ALIGN_CENTER)
+        sizer_filter.Add(wx.StaticText(self, -1, _("画像フィルタ:")), 0, wx.ALIGN_CENTER)
         sizer_filter.Add(self.combo_filter_image, 0, wx.ALL, 5)
 
         sizer_save = wx.BoxSizer()
@@ -1622,7 +1623,7 @@ class CompositePanel(wx.Panel):
             self.grid_duration.DeleteCols(pos=0, numCols=-delta_col)
 
         for ix, d in enumerate(CONFIG.manager.durations_multi):
-            self.grid_duration.SetColLabelValue(ix, f"【F{ix + 1}】     ")
+            self.grid_duration.SetColLabelValue(ix, _("【F{num}】     ").format(num=ix + 1))
             self.grid_duration.SetCellValue(0, ix, str(d))
             self.grid_duration.SetReadOnly(0, ix, True)
 
@@ -1729,7 +1730,7 @@ class CompositePanel(wx.Panel):
 
     def on_save(self, event):
         if not CONFIG.manager.can_save():
-            wxlib.show_message(self, "画像が表示されていません！", "画像未表示", wx.ICON_EXCLAMATION)
+            wxlib.show_message(self, _("画像が表示されていません！"), _("画像未表示"), wx.ICON_EXCLAMATION)
             return
 
         mode_save = self.combo_save.GetValue()
@@ -1741,57 +1742,57 @@ class CompositePanel(wx.Panel):
             self.save_apng()
 
     def save_gif(self):
-        path_save = wxlib.save_file(self, "GIF保存", "GIF|*.gif", "たぬき.gif")
+        path_save = wxlib.save_file(self, _("GIF保存"), "GIF|*.gif", _("たぬき.gif"))
         if not path_save:
             return
 
-        wxlib.post_start_progress(self.target_post, "少しお待ちください…", "保存中")
+        wxlib.post_start_progress(self.target_post, "少しお待ちください…", _("保存中"))
         thread_gif = threading.Thread(target=self.thread_gif, args=(path_save,))
         thread_gif.start()
 
     def thread_gif(self, path_save):
-        with wxlib.progress_context(self.target_post, "保存に失敗しました…", "保存失敗"):
+        with wxlib.progress_context(self.target_post, "保存に失敗しました…", _("保存失敗")):
             is_single = self.radio_single.GetValue()
             CONFIG.manager.save_gif(path_save, is_single)
             self.complete_save(path_save.parent)
 
     def save_png_sequence(self):
-        folder_save = wxlib.save_file(self, "連番PNG保存", "保存先フォルダ|", "連番たぬき")
+        folder_save = wxlib.save_file(self, _("連番PNG保存"), "保存先フォルダ|", _("連番たぬき"))
         if not folder_save:
             return
 
-        wxlib.post_start_progress(self.GetTopLevelParent(), "少しお待ちください…", "保存中")
+        wxlib.post_start_progress(self.GetTopLevelParent(), "少しお待ちください…", _("保存中"))
         thread_sequence = threading.Thread(target=self.thread_sequence, args=(folder_save,))
         thread_sequence.start()
 
     def thread_sequence(self, folder_save):
-        with wxlib.progress_context(self.target_post, "保存に失敗しました…", "保存失敗"):
+        with wxlib.progress_context(self.target_post, "保存に失敗しました…", _("保存失敗")):
             CONFIG.manager.save_png_sequence(folder_save)
             self.complete_save(folder_save)
 
     def save_apng(self):
-        path_save = wxlib.save_file(self, "APNG保存", "APNG|*.png", "Aたぬき.png")
+        path_save = wxlib.save_file(self, _("APNG保存"), "APNG|*.png", _("Aたぬき.png"))
         if not path_save:
             return
 
-        wxlib.post_start_progress(self.GetTopLevelParent(), "少しお待ちください…", "保存中")
+        wxlib.post_start_progress(self.GetTopLevelParent(), "少しお待ちください…", _("保存中"))
         thread_apng = threading.Thread(target=self.thread_apng, args=(path_save,))
         thread_apng.start()
 
     def thread_apng(self, path_save):
-        with wxlib.progress_context(self.target_post, "保存に失敗しました…", "保存失敗"):
+        with wxlib.progress_context(self.target_post, "保存に失敗しました…", _("保存失敗")):
             is_single = self.radio_single.GetValue()
             CONFIG.manager.save_apng(path_save, is_single)
             self.complete_save(path_save.parent)
 
     def complete_save(self, path_open):
-        message = "保存が完了しました。"
-        caption = "保存完了"
+        message = _("保存が完了しました。")
+        caption = _("保存完了")
         wxlib.post_end_progress(self.target_post, message, caption, path_open=path_open)
 
     def on_clear(self, event):
         style = wx.OK | wx.CANCEL | wx.ICON_EXCLAMATION
-        result = wxlib.show_message(self, "作業状況をすべてクリアしますか？", "ALLクリア", style=style)
+        result = wxlib.show_message(self, _("作業状況をすべてクリアしますか？"), _("ALLクリア"), style=style)
         if result != wx.ID_OK:
             return
 
