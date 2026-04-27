@@ -2,6 +2,12 @@
 
 This is a fork of the original Japanese 「たぬこら」 project with added English UI localization.
 
+## Screenshots
+
+| Original (Japanese) | Patched (English) |
+|:---|:---|
+| ![Original Japanese UI](assets/original-jp.png) | ![Patched English UI](assets/patched-en.png) |
+
 ## Requirements
 
 - Windows 10 or later (required for `pywin32` and DPI features)
