@@ -1,59 +1,26 @@
-# たぬこら (Tanukora) — Instant Tanuki Maker
+# InstantTanukiMaker i18n Expand
 
-This is a fork of the original Japanese 「たぬこら」 project with added English UI localization.
+> 一个下午，让狸合器在 GNU/Linux 上跑了起来。
 
-## Screenshots
+基于 [SupeChan/InstantTanukiMaker](https://github.com/SupeChan/InstantTanukiMaker) 的跨平台移植 + 中文语言扩展版本。
 
-| Original (Japanese) | Patched (English) |
-|:---|:---|
-| ![Original Japanese UI](assets/original-jp.png) | ![Patched English UI](assets/patched-en.png) |
+## ✅ 当前状态
 
-## Requirements
+- ✅ 已在 Ubuntu 26.04 (Kubuntu) 下通过原型测试
+- ✅ 中文界面支持 (`zh.json`)
+- ✅ 素材中文文件夹名自动映射
+- ✅ 跨平台打包脚本 (`Build.py`)
+- ⚠️ 等待社区接手维护
 
-- Windows 10 or later (required for `pywin32` and DPI features)
-- Python 3.9+
-- The original `Data/` asset folder (not included in this repo)
-
-## Setup
-
-1. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-2. Obtain the `Data/` assets:
-   - Download the original release ZIP from the upstream repository.
-   - Extract the `Data/` folder into the root of this project.
-
-3. Run from source:
-   ```bash
-   python main.py
-   ```
-
-## Building the .exe
-
-The easiest way is the provided `build.bat`:
-
-```batch
-build.bat
-```
-
-Or manually:
+## 🚀 快速开始
 
 ```bash
-pip install -r requirements.txt
-pyinstaller tanukora.spec
-```
+# 克隆仓库
+git clone https://github.com/Cesarion882/InstantTanukiMaker-i18n-expand
+cd InstantTanukiMaker-i18n-expand
 
-The resulting `.exe` will be in the `dist/` folder.
+# 安装依赖（Ubuntu/Debian）
+sudo apt install python3-wxgtk4.0 python3-numpy python3-opencv python3-pil python3-natsort
 
-## Localization
-
-UI text is now wrapped with a simple JSON-based i18n system. English strings live in `locale/en.json`. If a translation key is missing, the original Japanese text is shown as a fallback.
-
-To add a new language, copy `locale/en.json` to e.g. `locale/fr.json`, translate the values, and change the `lang` parameter in `i18n.py`.
-
-## Notes
-
-- This codebase targets Windows and uses `pywin32` / `ctypes.windll` calls.
-- The `Data/` folder is required; the app will not start without it.
+# 运行，使用X11后端的原因是在GTK Wayland下目前仍有问题
+GDK_BACKEND=x11 GDK_GL=disable python3 main.py
