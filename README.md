@@ -1,8 +1,6 @@
 # InstantTanukiMaker i18n Expand
 
-> 一个下午，让狸合器在 GNU/Linux 上跑了起来。
-
-基于 [arashari/InstantTanukiMaker](https://github.com/arashari/InstantTanukiMaker) 的跨平台移植 + 中文语言扩展版本。
+基于 [arashari/InstantTanukiMaker](https://github.com/arashari/InstantTanukiMaker) 的跨平台移植 + 中文语言扩展版本。（但是情况不太乐观）
 
 ## ✅ 当前状态
 
