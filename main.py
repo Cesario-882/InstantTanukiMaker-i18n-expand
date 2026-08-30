@@ -1,9 +1,9 @@
 import wx
 from wx.lib.scrolledpanel import ScrolledPanel
 import pathlib
-import win32gui, win32con
 import numpy as np
 import os
+import sys
 import threading
 
 import const
@@ -215,20 +215,22 @@ class MainFrame(wx.Frame):
     def on_deactivate(self, event):
         if event.GetActive():
             return
-
-        hwnd_dial = win32gui.FindWindow(None, "色の設定")
-        if not hwnd_dial:
+        # Linux 下没有 win32gui，直接跳过
+        if sys.platform != "win32":
             return
-
-        left, top = self.GetPosition()
-        width, height = self.GetSize()
-        right = left + width
-
-        l, t, r, b = win32gui.GetWindowRect(hwnd_dial)
-        width_dial, height_dial = r - l, b - t
-        pos = (np.clip(right - width_dial, 0, const.WIDTH_WORKING - width_dial),
-               np.clip(top, 0, const.HEIGHT_WORKING - height_dial))
         try:
+            import win32gui
+            import win32con
+            hwnd_dial = win32gui.FindWindow(None, "色の設定")
+            if not hwnd_dial:
+                return
+            left, top = self.GetPosition()
+            width, height = self.GetSize()
+            right = left + width
+            l, t, r, b = win32gui.GetWindowRect(hwnd_dial)
+            width_dial, height_dial = r - l, b - t
+            pos = (np.clip(right - width_dial, 0, const.WIDTH_WORKING - width_dial),
+                   np.clip(top, 0, const.HEIGHT_WORKING - height_dial))
             win32gui.SetWindowPos(hwnd_dial, win32con.HWND_TOP, *pos, width_dial, height_dial,
                                   win32con.SWP_SHOWWINDOW)
         except Exception:
@@ -262,17 +264,14 @@ class WatchFilter(wx.EventFilter):
 
 
 if __name__ == '__main__':
-    PROCESS_PER_MONITOR_DPI_AWARE = 2
-    ctypes.windll.shcore.SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE)
+    # 删除了 ctypes.windll.shcore.SetProcessDpiAwareness 调用
+    # 在 Linux 下不需要手动设置 DPI，wxPython 会自动适配
     wx.DisableAsserts()
     app = wx.App()
     name_instance = f"{app.GetAppName()}-{wx.GetUserId()}"
     instance = wx.SingleInstanceChecker(name_instance)
     if instance.IsAnotherRunning():
         wx.Exit()
-
-    # watcher = WatchFilter()
-    # app.AddFilter(watcher)
 
     MainFrame().Show()
     app.MainLoop()

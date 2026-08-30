@@ -1,5 +1,4 @@
 import ctypes
-import win32api
 import sys
 import pathlib
 from dataclasses import dataclass, fields
@@ -10,16 +9,7 @@ import numpy as np
 
 VERSION = "3.0.0"
 
-# DPI表示とモニタ情報
-PROCESS_PER_MONITOR_DPI_AWARE = 2
-ctypes.windll.shcore.SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE)
-INFO_MONITOR_FULL = win32api.GetMonitorInfo(win32api.MonitorFromPoint((0, 0)))
-AREA_WORKING = INFO_MONITOR_FULL.get("Work")
-WIDTH_WORKING, HEIGHT_WORKING = AREA_WORKING[2], AREA_WORKING[3]
-WIDTH_DEFAULT = 2560
-RATE_DISPLAY = WIDTH_WORKING / WIDTH_DEFAULT
-
-# 画像サイズ
+# ===== 画像サイズ =====
 DEFAULT_SIZE = (500, 500)
 MAX_SIZE = (1500, 1500)
 MIN_SIZE = (100, 100)
@@ -31,17 +21,28 @@ ICON_SIZE = (80, 80)
 THUMB_SIZE = (64, 64)
 THUMB_MINI_SIZE = (63, 63)
 
-# プロパティパネル色
+# ===== プロパティパネル色 =====
 COLOR_FILE = (200, 230, 200)
 COLOR_PARTS = (200, 200, 250)
 COLOR_NONE = (200, 200, 200)
 
-# フレーム数表示
+# ===== フレーム数表示 =====
 DISPLAY_FONT_SINGLE_SIZE = 20
 DISPLAY_FONT_DOUBLE_SIZE = 14
 DISPLAY_BBOX = (19, 53, 67, 84)
+MAX_SIZE = (1500, 1500)
+MIN_SIZE = (100, 100)
+DEFAULT_WIDTH, DEFAULT_HEIGHT = DEFAULT_SIZE
+MAX_WIDTH, MAX_HEIGHT = MAX_SIZE
+MIN_WIDTH, MIN_HEIGHT = MIN_SIZE
 
-# イベント通知
+ICON_SIZE = (80, 80)
+THUMB_SIZE = (64, 64)
+THUMB_MINI_SIZE = (63, 63)
+
+# ===== イベント通知 (Event Notifications) =====
+from wx.lib.newevent import NewEvent
+
 EVENT_UPDATE, EVT_UPDATE = NewEvent()
 EVENT_APPEND, EVT_APPEND = NewEvent()
 EVENT_SELECT, EVT_SELECT = NewEvent()
@@ -50,7 +51,6 @@ EVENT_INFO, EVT_INFO = NewEvent()
 EVENT_START_PROGRESS, EVT_START_PROGRESS = NewEvent()
 EVENT_END_PROGRESS, EVT_END_PROGRESS = NewEvent()
 EVENT_PLAY, EVT_PLAY = NewEvent()
-
 
 # ImageManager
 @dataclass

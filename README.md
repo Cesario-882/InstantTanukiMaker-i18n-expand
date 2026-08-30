@@ -1,23 +1,25 @@
-# InstantTanukiMaker i18n Expand
+# 狸合器 - Linux 移植版
 
-基于 [arashari/InstantTanukiMaker](https://github.com/arashari/InstantTanukiMaker) 的跨平台移植 + 中文语言扩展版本
+基于 asashari 的 InstantTanukiMaker-en，修复了 Linux 下的兼容性问题
 
-## ✅ 当前状态
+## 依赖
+- Python 3.10+
+- GTK3 运行时（仅限GNU/Linux）
 
-- ✅ 曾在 Ubuntu 26.04 LTS(Kubuntu) 下通过原型测试（不全面）
-- ✅ 中文界面支持 (`zh_CN.json`)
-- ✅ 实现了大部分逻辑
-- ⚠️ 等待社区接手维护
-
-## 🚀 快速开始
-
+## 安装
 ```bash
-# 克隆仓库
-git clone https://github.com/Cesarion882/InstantTanukiMaker-i18n-expand
-cd InstantTanukiMaker-i18n-expand
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt```
 
-# 安装依赖（Ubuntu/Debian）
-sudo apt install python3-wxgtk4.0 python3-numpy python3-opencv python3-pil python3-natsort
+```powershell
+# 首次运行需解除脚本执行限制（仅需一次）
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
 
-# 运行，使用X11后端的原因是在GTK Wayland下目前仍有问题
-GDK_BACKEND=x11 GDK_GL=disable python3 main.py
+# 安装 Python 并创建环境
+winget install -e --id Python.Python.3.12
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt```
+
+注：其运行时会报错，但不要在意那些细节（），GNU/Linux用户请在python3前附加GDK_BACKEND=x11以防止出现奇怪问题

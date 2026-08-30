@@ -9,10 +9,7 @@ import const
 from image_manager import ImageManager, FrameImage, FileImage, PartsImage
 import editor
 
-TYPE = "_type"
-VALUE = "value"
-VERSION = "version"
-
+VERSION = "3.0.0"
 
 class InstantEncoder(json.JSONEncoder):
     def default(self, obj):

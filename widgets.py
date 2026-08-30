@@ -1633,8 +1633,8 @@ class CompositePanel(wx.Panel):
         self.panel_grid.SetupScrolling(scroll_x=True, scroll_y=False)
 
         need_duration = CONFIG.manager.number_frames != 1
-        self.spin_duration.Enable(need_duration)
-        self.grid_duration.Enable(need_duration)
+        self.spin_duration.Enable(bool(need_duration))
+        self.grid_duration.Enable(bool(need_duration))
 
         self.combo_filter_color.SetValue(CONFIG.manager.filter_color)
         self.combo_filter_image.SetValue(CONFIG.manager.filter_image)
