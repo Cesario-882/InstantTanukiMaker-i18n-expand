@@ -1,6 +1,6 @@
-# 狸合器 - Linux 移植版
+# 狸合器 - 添加了 Linux 兼容
 
-基于 asashari 的 InstantTanukiMaker-en，修复了 Linux 下的兼容性问题
+基于 asashari 的 InstantTanukiMaker-en，进一步完善了i18n和跨平台兼容性
 
 ## 依赖
 - Python 3.10+
@@ -12,3 +12,5 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 # 注：其运行时会报错，但不要在意那些细节（），GNU/Linux用户请在python3前附加GDK_BACKEND=x11以防止出现奇怪问题
+```
+## 感谢Pycdc提供的GPL v3 Licence文件（谁问你了）
