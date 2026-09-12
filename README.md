@@ -11,6 +11,6 @@
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-# 注：其运行时会报错，但不要在意那些细节（），GNU/Linux用户请在python3前附加GDK_BACKEND=x11以防止出现奇怪问题
+# 注：其运行时会报错，但不要在意那些细节（）
 ```
 ## 感谢Pycdc提供的GPL v3 Licence文件（谁问你了）
