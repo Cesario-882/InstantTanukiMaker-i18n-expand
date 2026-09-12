@@ -277,7 +277,7 @@ class PreviewPanel(wx.Panel):
         image_preview = CONFIG.manager.get_preview()
         self.bmp_preview = wx.Bitmap.FromBufferRGBA(*image_preview.size, image_preview.tobytes())
         self.panel_preview.SetMinSize(image_preview.size)
-        self.show_frame()
+        wx.CallAfter(self.show_frame)  # 将 show_frame 调度到主线程执行
 
     def show_frame(self):
         self.sbmp_preview.SetBitmap(self.bmp_preview)
@@ -537,8 +537,8 @@ class PropertyPanel(wx.Panel):
         self.spin_alpha.Bind(wx.EVT_SPINCTRLDOUBLE, self.on_color)
         self.spin_alpha.Bind(wx.EVT_TEXT_ENTER, self.on_color)
 
-        self.combo_blend.Append(const.MODES_BLEND)
-        self.combo_blend.SetValue(const.BlendMode.NONE)
+        self.combo_blend.Append([_(mode) for mode in const.MODES_BLEND])
+        self.combo_blend.SetValue(_(const.BlendMode.NONE))
 
         self.check_alias.Bind(wx.EVT_CHECKBOX, self.on_alias)
         self.check_flip.Bind(wx.EVT_CHECKBOX, self.on_flip)
@@ -1537,19 +1537,19 @@ class CompositePanel(wx.Panel):
 
         self.panel_grid.Hide()
 
-        self.combo_filter_color.Append(const.FILTERS_COLOR)
-        self.combo_filter_color.SetValue(const.ColorFilter.NONE)
+        self.combo_filter_color.Append([_(mode) for mode in const.FILTERS_COLOR])
+        self.combo_filter_color.SetValue(_(const.ColorFilter.NONE))
         self.combo_filter_color.Bind(wx.EVT_COMBOBOX, self.on_filter)
         self.combo_filter_color.Bind(wx.EVT_MOUSEWHEEL, lambda e: None)
-        self.combo_filter_image.Append(const.FILTERS_IMAGE)
-        self.combo_filter_image.SetValue(const.ColorFilter.NONE)
+        self.combo_filter_image.Append([_(mode) for mode in const.FILTERS_IMAGE])
+        self.combo_filter_image.SetValue(_(const.ImageFilter.NONE))
         self.combo_filter_image.Bind(wx.EVT_COMBOBOX, self.on_filter)
         self.combo_filter_image.Bind(wx.EVT_MOUSEWHEEL, lambda e: None)
 
         self.btn_clear.Bind(wx.EVT_BUTTON, self.on_clear)
 
-        self.combo_save.Append(const.MODES_SAVE)
-        self.combo_save.SetValue(const.SaveMode.GIF)
+        self.combo_save.Append([_(mode) for mode in const.MODES_SAVE])
+        self.combo_save.SetValue(_(const.SaveMode.GIF))
         self.combo_save.Bind(wx.EVT_MOUSEWHEEL, lambda e: None)
         self.btn_save.Bind(wx.EVT_BUTTON, self.on_save)
 
@@ -1572,7 +1572,7 @@ class CompositePanel(wx.Panel):
 
         sizer_duration = wx.BoxSizer(wx.VERTICAL)
         sizer_radio = wx.BoxSizer()
-        sizer_radio.Add(wx.StaticText(self, -1, "表示間隔(ms)"), 0, wx.RIGHT, 10)
+        sizer_radio.Add(wx.StaticText(self, -1, _("表示間隔(ms)")), 0, wx.RIGHT, 10)
         sizer_radio.Add(self.radio_single, 0)
         sizer_radio.Add(self.radio_multi, 0)
 
@@ -1746,12 +1746,12 @@ class CompositePanel(wx.Panel):
         if not path_save:
             return
 
-        wxlib.post_start_progress(self.target_post, "少しお待ちください…", _("保存中"))
+        wxlib.post_start_progress(self.target_post, _("少しお待ちください…"), _("保存中"))
         thread_gif = threading.Thread(target=self.thread_gif, args=(path_save,))
         thread_gif.start()
 
     def thread_gif(self, path_save):
-        with wxlib.progress_context(self.target_post, "保存に失敗しました…", _("保存失敗")):
+        with wxlib.progress_context(self.target_post, _("保存に失敗しました…"), _("保存失敗")):
             is_single = self.radio_single.GetValue()
             CONFIG.manager.save_gif(path_save, is_single)
             self.complete_save(path_save.parent)
@@ -1761,12 +1761,12 @@ class CompositePanel(wx.Panel):
         if not folder_save:
             return
 
-        wxlib.post_start_progress(self.GetTopLevelParent(), "少しお待ちください…", _("保存中"))
+        wxlib.post_start_progress(self.GetTopLevelParent(), _("少しお待ちください…"), _("保存中"))
         thread_sequence = threading.Thread(target=self.thread_sequence, args=(folder_save,))
         thread_sequence.start()
 
     def thread_sequence(self, folder_save):
-        with wxlib.progress_context(self.target_post, "保存に失敗しました…", _("保存失敗")):
+        with wxlib.progress_context(self.target_post, _("保存に失敗しました…"), _("保存失敗")):
             CONFIG.manager.save_png_sequence(folder_save)
             self.complete_save(folder_save)
 
@@ -1775,12 +1775,12 @@ class CompositePanel(wx.Panel):
         if not path_save:
             return
 
-        wxlib.post_start_progress(self.GetTopLevelParent(), "少しお待ちください…", _("保存中"))
+        wxlib.post_start_progress(self.GetTopLevelParent(), _("少しお待ちください…"), _("保存中"))
         thread_apng = threading.Thread(target=self.thread_apng, args=(path_save,))
         thread_apng.start()
 
     def thread_apng(self, path_save):
-        with wxlib.progress_context(self.target_post, "保存に失敗しました…", _("保存失敗")):
+        with wxlib.progress_context(self.target_post, _("保存に失敗しました…"), _("保存失敗")):
             is_single = self.radio_single.GetValue()
             CONFIG.manager.save_apng(path_save, is_single)
             self.complete_save(path_save.parent)

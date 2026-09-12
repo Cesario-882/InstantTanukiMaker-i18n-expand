@@ -8,8 +8,6 @@ from dataclasses import dataclass, field
 import const
 import editor
 
-import time
-
 
 @dataclass
 class PartsImage:
@@ -218,7 +216,6 @@ class FileImage:
 
         if self.number_frames is None:
             self.number_frames = len(self.frames)
-
     def get_type(self, path_image, frames):
         in_material = const.FOLDER_MATERIAL in path_image.parents
         in_append = const.FOLDER_APPEND in path_image.parents
@@ -226,21 +223,49 @@ class FileImage:
             return const.ImageType.ETC
 
         path_root = const.FOLDER_MATERIAL if in_material else const.FOLDER_APPEND
+
+        # 别名映射：中文 → 日文（只改这里！）
+        ALIAS_MAP = {
+            "基础": "素体",
+            "基础透明": "素体透過",
+            "玩偶服": "きぐるみ",
+            "表情": "表情",
+            "眉毛": "眉",
+            "眼睛": "目",
+            "嘴巴": "口",
+            "装饰品": "アクセサリ",
+            "部件": "パーツ",
+            "自由": "フリー",
+            "其他": "その他",
+            "身体": "素体",
+            "动物外套": "きぐるみ",
+            "脸表情": "表情",
+            "配饰": "アクセサリ",
+            "自由配饰": "自由",
+        }
+
+        # 收集所有要检查的名称：日文原名 + 中文别名
         for type_image in const.TYPES_IMAGE:
-            if path_root / type_image in path_image.parents:
-                if type_image == const.ImageType.BASE:
-                    if path_image.parent.stem == const.ImageType.COLLAGE:
-                        is_sep = any(map(lambda w: w in path_image.stem, const.KEYWORDS_SEPARATE))
-                        return const.ImageType.ETC if is_sep else const.ImageType.COLLAGE
+            # 日文原名
+            names_to_check = [type_image]
+            # 如果有对应的中文别名，也加上
+            for zh, ja in ALIAS_MAP.items():
+                if ja == type_image:
+                    names_to_check.append(zh)
+                    break
 
-                    elif const.KEYWORD_TRANSPARENT in path_image.stem:
-                        return const.ImageType.TRANSPARENT
-
+            for name in names_to_check:
+                if path_root / name in path_image.parents:
+                    if type_image == const.ImageType.BASE:
+                        if path_image.parent.stem == const.ImageType.COLLAGE:
+                            is_sep = any(map(lambda w: w in path_image.stem, const.KEYWORDS_SEPARATE))
+                            return const.ImageType.ETC if is_sep else const.ImageType.COLLAGE
+                        elif const.KEYWORD_TRANSPARENT in path_image.stem:
+                            return const.ImageType.TRANSPARENT
+                        else:
+                            return const.ImageType.BASE
                     else:
-                        return const.ImageType.BASE
-
-                else:
-                    return const.ImageType.ETC if frames else type_image
+                        return const.ImageType.ETC if frames else type_image
 
         return const.ImageType.ETC
 

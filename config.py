@@ -8,8 +8,10 @@ from collections.abc import Iterator
 import const
 from image_manager import ImageManager, FrameImage, FileImage, PartsImage
 import editor
+from i18n import _
 
 VERSION = "3.0.0"
+
 
 class InstantEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -43,7 +45,6 @@ class InstantEncoder(json.JSONEncoder):
     def convert_value(self, obj):
         value = {key: {TYPE: tuple.__name__, VALUE: val} if isinstance(val, tuple) else val
                  for key, val in obj.__dict__.items()}
-
         return value
 
 
@@ -58,7 +59,6 @@ class InstantDecoder(json.JSONDecoder):
         type_obj = obj.get(TYPE)
         if type_obj == ImageManager.__name__:
             manager = ImageManager(**obj[VALUE])
-            # id文字列からXXXImageのポインタに戻す
             manager.convert_id2img()
             return manager
         elif type_obj == FrameImage.__name__:
@@ -96,21 +96,21 @@ class Config:
             manager = json.load(f, cls=InstantDecoder)
 
         self.manager = manager
-        return True, "読込が完了しました！"
+        return True, _("読込が完了しました！")
 
     def check_json(self, dic_json):
         is_project = dic_json.get(TYPE, None) == ImageManager.__name__
         if not is_project:
-            return False, "たぬこらのプロジェクトファイルではありません！"
+            return False, _("たぬこらのプロジェクトファイルではありません！")
 
         # バージョンチェック
         version_json = dic_json[VALUE][VERSION]
         for v_json, v_app in zip(version_json.split("."), const.VERSION.split(".")):
             if int(v_json) > int(v_app):
-                return False, ("プロジェクトファイルのバージョンが今のアプリより新しいため読み込めません！\n"
-                               "たぬこらのバージョンをあげてみて下さい！")
+                return False, _("プロジェクトファイルのバージョンが今のアプリより新しいため読み込めません！\n"
+                                "たぬこらのバージョンをあげてみて下さい！")
 
-        return True, "チェック完了"
+        return True, _("チェック完了")
 
 
 CONFIG = Config()

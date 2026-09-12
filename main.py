@@ -12,7 +12,6 @@ import widgets
 import menus
 import wxlib
 
-import ctypes
 from i18n import _
 
 
