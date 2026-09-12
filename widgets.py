@@ -7,7 +7,7 @@ from wx.lib.agw.customtreectrl import (CustomTreeCtrl, TREE_ITEMTYPE_CHECK,
                                        TR_HAS_VARIABLE_ROW_HEIGHT,
                                        TR_DEFAULT_STYLE, TR_ELLIPSIZE_LONG_ITEMS,
                                        TR_TOOLTIP_ON_LONG_ITEMS,
-                                       EVT_TREE_ITEM_CHECKED)
+                                       EVT_TREE_ITEM_CHECKED, TR_LINES_AT_ROOT)
 from wx.lib.statbmp import GenStaticBitmap
 
 import numpy as np
@@ -232,7 +232,7 @@ class PreviewPanel(wx.Panel):
         self.parent = parent
         self.sizer = wx.BoxSizer(wx.VERTICAL)
         self.bmp_preview = wx.Bitmap()
-        self.sbmp_preview = GenStaticBitmap(self.panel_preview, -1, self.bmp_preview)
+        self.sbmp_preview = wx.StaticBitmap(self.panel_preview, -1, self.bmp_preview)
         self.anime_preview = AnimationCtrl(self.panel_preview, -1)
         self.setting_widgets()
 
@@ -245,8 +245,6 @@ class PreviewPanel(wx.Panel):
     def setting_widgets(self):
         self.panel_preview.SetMinSize(const.DEFAULT_SIZE)
 
-        self.sbmp_preview.SetBackgroundStyle(wx.BG_STYLE_CUSTOM)
-        self.sbmp_preview.Bind(wx.EVT_PAINT, self.on_paint)
         self.sbmp_preview.Bind(wx.EVT_LEFT_DOWN, self.on_left)
         self.sbmp_preview.Bind(wx.EVT_LEFT_DCLICK, self.on_left)
         self.sbmp_preview.Bind(wx.EVT_RIGHT_DOWN, self.on_right)
@@ -259,10 +257,12 @@ class PreviewPanel(wx.Panel):
         self.sbmp_preview.Bind(wx.EVT_MOUSEWHEEL, self.on_wheel)
 
         sizer_view = wx.BoxSizer()
+        sizer_view.Add(self.sbmp_preview, 1, wx.GROW)
         sizer_view.Add(self.anime_preview, 1, wx.GROW)
         self.panel_preview.SetSizer(sizer_view)
+
         self.sizer.Add(self.panel_header, 0, wx.ALIGN_CENTER)
-        self.sizer.Add(self.panel_preview, 0, wx.ALIGN_CENTER)
+        self.sizer.Add(self.panel_preview, 1, wx.GROW)
         self.SetSizer(self.sizer)
 
     def update_display(self):
@@ -276,18 +276,25 @@ class PreviewPanel(wx.Panel):
     def load_frame(self):
         image_preview = CONFIG.manager.get_preview()
         self.bmp_preview = wx.Bitmap.FromBufferRGBA(*image_preview.size, image_preview.tobytes())
-        self.panel_preview.SetMinSize(image_preview.size)
-        wx.CallAfter(self.show_frame)  # 将 show_frame 调度到主线程执行
+        wx.CallAfter(self.show_frame)
 
     def show_frame(self):
         self.sbmp_preview.SetBitmap(self.bmp_preview)
+        self.sbmp_preview.SetMinSize(self.bmp_preview.GetSize())
         self.sbmp_preview.Show()
         self.anime_preview.Stop()
+        self.anime_preview.Hide()
+
+        self.sbmp_preview.Refresh()
+        self.sbmp_preview.Update()
+        self.panel_preview.Layout()
+        self.panel_preview.Refresh()
         wxlib.post_layout(self.GetTopLevelParent())
 
     def show_animation(self):
         self.anime_preview.LoadFile(str(const.PATH_GIF_PREVIEW))
         self.sbmp_preview.Hide()
+        self.anime_preview.Show()
         self.anime_preview.Play()
         self.panel_header.play()
 
@@ -379,10 +386,6 @@ class PreviewPanel(wx.Panel):
 
     def change_frame(self, bmp: wx.Bitmap):
         self.sbmp_preview.SetBitmap(bmp)
-
-    def on_paint(self, event):
-        if self.bmp_preview and self.sbmp_preview:
-            wx.BufferedPaintDC(self.sbmp_preview, self.bmp_preview)
 
     def on_focus(self, event):
         is_focused = event.GetEventType() == wx.wxEVT_SET_FOCUS
@@ -1000,7 +1003,7 @@ class PartsTreeCtrl(CustomTreeCtrl):
 
     def __init__(self, parent):
         super().__init__(parent, -1, pos=wx.DefaultPosition, size=wx.DefaultSize,
-                         style=self.STYLE_TREE, agwStyle=TR_DEFAULT_STYLE,
+                         style=self.STYLE_TREE, agwStyle=TR_DEFAULT_STYLE | TR_LINES_AT_ROOT,
                          validator=wx.DefaultValidator,
                          name="CustomTreeCtrl")
         self.target_post = self.GetTopLevelParent()
@@ -1418,7 +1421,7 @@ class ComponentPanel(wx.Panel):
         self.flc = FileListCtrl(self.panel_file)
         self.tree = PartsTreeCtrl(self.panel_parts)
 
-        sbox = wx.StaticBox(self, -1, "画像構成")
+        sbox = wx.StaticBox(self, -1, _("画像構成"))
         self.sbsizer = wx.StaticBoxSizer(sbox, wx.VERTICAL)
         self.setting_widgets()
 
@@ -1537,12 +1540,18 @@ class CompositePanel(wx.Panel):
 
         self.panel_grid.Hide()
 
-        self.combo_filter_color.Append([_(mode) for mode in const.FILTERS_COLOR])
-        self.combo_filter_color.SetValue(_(const.ColorFilter.NONE))
+                # 用 clientData 存原文，显示用译文
+        for mode in const.FILTERS_COLOR:
+            self.combo_filter_color.Append(_(mode), clientData=mode)
+        self.combo_filter_color.SetSelection(0)
+
         self.combo_filter_color.Bind(wx.EVT_COMBOBOX, self.on_filter)
         self.combo_filter_color.Bind(wx.EVT_MOUSEWHEEL, lambda e: None)
-        self.combo_filter_image.Append([_(mode) for mode in const.FILTERS_IMAGE])
-        self.combo_filter_image.SetValue(_(const.ImageFilter.NONE))
+
+        for mode in const.FILTERS_IMAGE:
+            self.combo_filter_image.Append(_(mode), clientData=mode)
+        self.combo_filter_image.SetSelection(0)
+
         self.combo_filter_image.Bind(wx.EVT_COMBOBOX, self.on_filter)
         self.combo_filter_image.Bind(wx.EVT_MOUSEWHEEL, lambda e: None)
 
