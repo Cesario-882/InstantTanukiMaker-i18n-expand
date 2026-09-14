@@ -1,6 +1,7 @@
 # 狸合器 - 添加了 Linux 兼容
 
 基于 asashari 的 InstantTanukiMaker-en，进一步完善了i18n和跨平台兼容性
+
 该仓库已废弃，关于后续发布请移步[Cesario-882/InstantTanukiMaker4Qt](https://github.com/Cesario-882/InstantTanukiMaker4Qt)仓库
 
 ## 依赖
